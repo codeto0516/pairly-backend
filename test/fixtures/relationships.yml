@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  uid: MyString
+  user_1: one
+  user_2: one
+
+two:
+  uid: MyString
+  user_1: two
+  user_2: two
