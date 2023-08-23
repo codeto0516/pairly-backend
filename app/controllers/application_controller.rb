@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+
   require 'firebase_auth/token_validator'
   before_action :authenticate
   class AuthenticationError < StandardError; end

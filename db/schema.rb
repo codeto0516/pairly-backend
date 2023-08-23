@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema[7.0].define(version: 2023_08_22_044146) do
   create_table "relationships", force: :cascade do |t|
     t.string "uid"
@@ -32,4 +33,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_22_044146) do
   add_foreign_key "relationships", "user_1s"
   add_foreign_key "relationships", "user_2s"
   add_foreign_key "users", "relationships"
+
 end
