@@ -11,9 +11,10 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 gem "rack-cors"
 gem "devise"
 gem 'devise_token_auth'
-gem 'devise-i18n'
+gem 'devise-i18n' 
 gem "omniauth"
-gem 'dotenv-rails'
+gem 'dotenv-rails' 
+gem 'jwt'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
@@ -21,7 +22,9 @@ end
 
 group :development do
   gem "sqlite3", "~> 1.4"
-
+  gem 'rubocop', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
 end
 
 
