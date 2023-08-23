@@ -10,8 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+ActiveRecord::Schema[7.0].define(version: 2023_08_23_223902) do
+  create_table "big_categories", force: :cascade do |t|
+    t.string "name"
+    t.integer "transaction_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["transaction_type_id"], name: "index_big_categories_on_transaction_type_id"
+  end
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_22_044146) do
   create_table "relationships", force: :cascade do |t|
     t.string "uid"
     t.integer "user_1_id", null: false
@@ -22,6 +29,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_22_044146) do
     t.index ["user_2_id"], name: "index_relationships_on_user_2_id"
   end
 
+  create_table "small_categories", force: :cascade do |t|
+    t.string "name"
+    t.integer "big_category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["big_category_id"], name: "index_small_categories_on_big_category_id"
+  end
+
+  create_table "transaction_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "uid"
     t.integer "relationship_id"
@@ -30,8 +51,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_22_044146) do
     t.index ["relationship_id"], name: "index_users_on_relationship_id"
   end
 
+  add_foreign_key "big_categories", "transaction_types"
   add_foreign_key "relationships", "user_1s"
   add_foreign_key "relationships", "user_2s"
+  add_foreign_key "small_categories", "big_categories"
   add_foreign_key "users", "relationships"
-
 end
