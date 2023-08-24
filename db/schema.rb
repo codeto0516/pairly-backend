@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema[7.0].define(version: 2023_08_23_223902) do
   create_table "big_categories", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.integer "transaction_type_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -30,7 +30,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_23_223902) do
   end
 
   create_table "small_categories", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.integer "big_category_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -41,14 +41,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_23_223902) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_transaction_types_on_name", unique: true
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "uid"
+    t.string "uid", null: false
+    t.string "email"
+    t.string "name"
+    t.string "picture"
     t.integer "relationship_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["relationship_id"], name: "index_users_on_relationship_id"
+    t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
   add_foreign_key "big_categories", "transaction_types"
