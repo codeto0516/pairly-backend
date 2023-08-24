@@ -1,0 +1,181 @@
+- transaction_type_name: 支出
+  categories:
+      - big_category_name: 未分類
+        small_categories:
+            - 未分類
+      - big_category_name: 食費
+        small_categories:
+            - 未分類
+            - 飲料代
+            - 食費
+            - 食料品
+            - 外食
+            - 朝ご飯
+            - 昼ご飯
+            - 夜ご飯
+            - カフェ
+            - その他食費
+      - big_category_name: 日用品
+        small_categories:
+            - 未分類
+            - 日用品
+            - 子育て用品
+            - ドラッグストア
+            - おこづかい
+            - ペット用品
+            - タバコ
+            - その他用品
+      - big_category_name: 趣味・娯楽
+        small_categories:
+            - 未分類
+            - アウトドア
+            - ゴルフ
+            - スポーツ
+            - 映画・音楽・ゲーム
+            - 本
+            - 旅行
+            - 秘密の趣味
+            - その他趣味・娯楽
+      - big_category_name: 交際費
+        small_categories:
+            - 未分類
+            - デート代
+            - 交際費
+            - 飲み会
+            - プレゼント代
+            - 冠婚葬祭
+            - その他交際費
+      - big_category_name: 交通費
+        small_categories:
+            - 未分類
+            - 交通費
+            - 電車
+            - バス
+            - タクシー
+            - 飛行機
+            - その他交通費
+      - big_category_name: 衣服・美容
+        small_categories:
+            - 未分類
+            - 衣服
+            - クリーニング
+            - 美容院・理髪
+            - 化粧品
+            - アクセサリー
+            - その他衣服・美容
+      - big_category_name: 健康・医療
+        small_categories:
+            - 未分類
+            - フィットネス
+            - ボディケア
+            - 医療費
+            - 薬
+            - その他健康・医療
+      - big_category_name: 自動車
+        small_categories:
+            - 未分類
+            - 自動車ローン
+            - 道路料金
+            - ガソリン
+            - 駐車場
+            - 車両
+            - 車検・整備
+            - 自動車保険
+            - その他自動車
+      - big_category_name: 教養・教育
+        small_categories:
+            - 未分類
+            - 書籍
+            - 新聞・雑誌
+            - 習い事
+            - 学費
+            - 塾
+            - その他教養・教育]
+      - big_category_name: 特別な支出
+        small_categories:
+            - 未分類
+            - 家具・家電
+            - 住宅・リフォーム
+            - その他特別な支出
+      - big_category_name: 現金・カード
+        small_categories:
+            - 未分類
+            - ATM引き出し
+            - カード引き落とし
+            - 電子マネー
+            - 使途不明金
+            - その他現金・カード
+      - big_category_name: 水道・光熱費
+        small_categories:
+            - 未分類
+            - 光熱費
+            - 電気代
+            - ガス・灯油代
+            - 水道代
+            - その他水道・光熱費
+      - big_category_name: 通信費
+        small_categories:
+            - 未分類
+            - アプリ購入
+            - サブスクリプション
+            - 携帯電話
+            - 固定電話
+            - インターネット
+            - 放送視聴料
+            - 情報サービス
+            - 宅配便・運送
+            - その他通信費
+      - big_category_name: 住宅
+        small_categories:
+            - 未分類
+            - 住宅
+            - 家賃・地代
+            - ローン返済
+            - 管理費・積立金
+            - 地震・火災保険
+            - その他住宅
+      - big_category_name: 税・社会保障
+        small_categories:
+            - 未分類
+            - 所得税・住民税
+            - 年金保険料
+            - 健康保険
+            - その他税・社会保障
+      - big_category_name: 保険
+        small_categories:
+            - 未分類
+            - 生命保険
+            - 医療保険
+            - その他保険
+      - big_category_name: その他
+        small_categories:
+            - 未分類
+            - 宝くじ
+            - 手数料
+            - 仕送り
+            - 事業経費
+            - 事業原価
+            - 事業投資
+            - 寄付金
+            - 雑費
+- transaction_type_name: 収入
+  categories:
+      - big_category_name: 未分類
+        small_categories:
+            - 未分類
+      - big_category_name: 収入
+        small_categories:
+            - 未分類
+            - セルフバック
+            - 還付金
+            - キャッシュバック
+            - 給付金
+            - 雑所得
+            - 給与
+            - 一時所得
+            - 事業・副業
+            - 年金
+            - 配当所得
+            - 不動産所得
+            - 不明な入金
+            - その他入金

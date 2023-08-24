@@ -1,36 +1,27 @@
 class Api::V1::UsersController < ApplicationController
 
+    # ユーザー情報取得
     def index
-        puts "==========================================="
-        puts 
-
-
-        puts "ここでindex"
-        render status: 200, json: { message: @uid }
-        puts "==========================================="
-
-    end
-
-    def show 
-        user = User.find_by(uid: @uid)
-    end
-
-    def create 
-        user = User.find_by(uid: @uid)
+        user = User.find_by(uid: @payload["user_id"])
         if user.nil?
             # 既存のユーザデータがないなら新規作成
-            @user = User.new(uid: @uid)
-            if @user.save!
-                render json: {message: "ユーザー登録成功！"}
+            user = User.new(uid: @payload["user_id"], email: @payload["email"], name: @payload["name"], picture: @payload["picture"])
+            if user.save!
+                render json: {user: user, message: "ユーザー登録が成功しました。"}, status: :created
             else
-                render json: {message: "ユーザー登録失敗！"}
-                
+                render json: {user: user, message: "ユーザー登録が失敗しました。"}, status: :unprocessable_entity
             end
-        else 
-            puts "既にユーザーが存在します"
+        else
+            render json: {user: user, message: "既存のユーザー情報を返します。"}, status: :ok
         end
     end
 
-
-
 end
+    # def create 
+    #     @user = User.find_or_create_by(uid: @payload.uid, name: @payload.name, picture: @payload.picture)
+    #     if @user.persisted?
+    #         render json: @user, status: :created
+    #     else
+    #         render json: {errors: "ユーザー登録失敗！"}, status: :unprocessable_entity
+    #     end
+    # end
