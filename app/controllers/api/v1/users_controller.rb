@@ -1,5 +1,14 @@
 class Api::V1::UsersController < ApplicationController
 
+    def show
+        user = User.find_by(uid: params[:uid])
+        if user
+            render json: {user: user}
+        else
+            render json: {message: "user not find"}
+        end
+    end
+
     # ユーザー情報取得
     def index
         puts @payload
@@ -15,6 +24,10 @@ class Api::V1::UsersController < ApplicationController
         else
             render json: {user: user, message: "既存のユーザー情報を返します。"}, status: :ok
         end
+    end
+
+    def update 
+
     end
 
 end
