@@ -48,7 +48,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_23_223902) do
     t.string "uid", null: false
     t.string "email"
     t.string "name"
-    t.string "picture"
+    t.string "image"
     t.integer "relationship_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
