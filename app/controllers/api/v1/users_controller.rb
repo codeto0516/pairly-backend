@@ -2,10 +2,11 @@ class Api::V1::UsersController < ApplicationController
 
     # ユーザー情報取得
     def index
+        puts @payload
         user = User.find_by(uid: @payload["user_id"])
         if user.nil?
             # 既存のユーザデータがないなら新規作成
-            user = User.new(uid: @payload["user_id"], email: @payload["email"], name: @payload["name"], picture: @payload["picture"])
+            user = User.new(uid: @payload["user_id"], email: @payload["email"], name: @payload["name"], image: @payload["picture"])
             if user.save!
                 render json: {user: user, message: "ユーザー登録が成功しました。"}, status: :created
             else
