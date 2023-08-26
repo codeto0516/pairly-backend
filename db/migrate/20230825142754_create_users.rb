@@ -4,12 +4,9 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.string :uid, null: false
       t.string :email
       t.string :name
-      t.string :image
-      t.references :relationship, null: true, foreign_key: true
+      t.string :iamge
 
       t.timestamps
     end
-
-    add_index :users, :uid, unique: true
   end
 end

@@ -5,8 +5,5 @@ class CreateTransactionTypes < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
-
-    add_index :transaction_types, :name, unique: true
-    
   end
 end
