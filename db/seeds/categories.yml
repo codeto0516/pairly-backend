@@ -1,4 +1,4 @@
-- transaction_type: 支出
+- transaction_type: spending
   categories:
     - parent: 未分類
       children:
@@ -158,7 +158,7 @@
         - 事業投資
         - 寄付金
         - 雑費
-- transaction_type: 収入
+- transaction_type: income
   categories:
     - parent: 未分類
       children:
