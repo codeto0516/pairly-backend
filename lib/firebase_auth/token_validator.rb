@@ -45,17 +45,26 @@ class FirebaseAuth::TokenValidator
             end
         end
 
+        raise InvalidTokenError.new('Token signature has expired') unless payload
+
         # JWT.decode でチェックされない項目のチェック
         raise InvalidTokenError.new('Invalid auth_time') unless Time.zone.at(payload['auth_time']).past?
         raise InvalidTokenError.new('Invalid sub') if payload['sub'].empty?
 
         payload
 
+    rescue JWT::ExpiredSignature
+        raise InvalidTokenError.new('Token signature has expired')
+
     rescue JWT::DecodeError => e
+        puts "==================================================================="
         Rails.logger.error e.message
         Rails.logger.error e.backtrace.join("\n")
         # raise InvalidTokenError.new(e.message)
+        puts "==================================================================="
+
         return nil
+
     end
 
     private
