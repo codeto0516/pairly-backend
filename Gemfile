@@ -15,6 +15,7 @@ gem 'devise-i18n'
 gem "omniauth"
 gem 'dotenv-rails' 
 gem 'jwt'
+gem 'will_paginate'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
