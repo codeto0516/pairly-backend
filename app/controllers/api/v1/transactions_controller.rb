@@ -1,18 +1,20 @@
 class Api::V1::TransactionsController < ApplicationController
     before_action :transaction_params, only: [:create]
     before_action :set_transaction, only: [:show, :update, :destroy]
+    # before_action :set_transaction_list, only: [:index]
 
     def index
-
         # パラメータを取得
         start_date = params[:start_date] || Date.today.beginning_of_month
         end_date = params[:end_date] || Date.today.end_of_month
         page = params["page"] || 1
         per_page = params["per-page"] || 10
+        
 
+        user = User.find_by(uid: @payload["user_id"])
 
         # 指定月で絞り込み
-        month_transactions = Transaction.where("paid_date between ? and ?", start_date, end_date)
+        month_transactions = user.transactions.where("paid_date between ? and ?", start_date, end_date)
         
         # 新しい日付順に並べ替え
         sorted_transactions = month_transactions.includes(
@@ -41,7 +43,7 @@ class Api::V1::TransactionsController < ApplicationController
         end
 
         # 総件数を取得
-        total_count = Transaction.count
+        total_count = month_transactions.count
 
         if transaction_list.empty?
             render json: { 
@@ -141,7 +143,12 @@ class Api::V1::TransactionsController < ApplicationController
     def set_transaction
         @transaction = Transaction.find(params[:id])
         puts @transaction.inspect
+    end
 
+    # ユーザーに紐づいた取引を取得
+    def set_transaction_list
+        # 
+        @transactions = Transaction.all
     end
 
 
