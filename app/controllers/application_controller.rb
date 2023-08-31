@@ -18,6 +18,8 @@ class ApplicationController < ActionController::API
 
     if @payload
       puts "認証成功！"
+    else
+      render json: { error: { messages: ["認証に失敗しました。"] } }, status: :unauthorized
     end
   end
 

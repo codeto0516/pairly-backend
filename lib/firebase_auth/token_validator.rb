@@ -54,7 +54,8 @@ class FirebaseAuth::TokenValidator
         payload
 
     rescue JWT::ExpiredSignature
-        raise InvalidTokenError.new('Token signature has expired')
+        # raise InvalidTokenError.new('Token signature has expired')
+        return nil
 
     rescue JWT::DecodeError => e
         puts "==================================================================="
