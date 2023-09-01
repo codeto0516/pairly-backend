@@ -1,39 +1,56 @@
 class Api::V1::UsersController < ApplicationController
+
+    require 'firebase_auth/user_profile'
     before_action :user_params, only: [:create, :update]
-    before_action :set_user, only: [:show, :update, :destroy]
+    # before_action :set_user, only: [ :update, :destroy]
 
     # GET /users
     def index
-        @user = User.find_by(uid: @payload["user_id"])
+        # @user = User.find_by(uid: @payload["user_id"])
 
-        if @user.nil?
-            # 既存のユーザデータがないなら新規作成
-            @user = User.new(uid: @payload["user_id"],email: @payload["email"], name: @payload["name"], image: @payload["picture"])
+        # if @user.nil?
+        #     # 既存のユーザデータがないなら新規作成
+        #     @user = User.new(uid: @payload["user_id"], email: @payload["email"], name: @payload["name"], image: @payload["picture"])
             
-            if @user.save!
-                render_success_response(:created, "success to create user", @user, nil)
-            else
-                render_failed_response(:unprocessable_entity, "failed to create user")
-            end
-        end
+        #     if @user.save!
+        #         render_success_response(:created, "success to create user", @user)
+        #     else
+        #         render_failed_response(:unprocessable_entity, "failed to create user")
+        #     end
+        # end
 
-        render_success_response(:ok, "success to get user", @user, partner)
+        # render_success_response(:ok, "success to get user", @payload)
    
     end
 
     # GET /users/:id
     def show
-        if @user.nil?
-            render_failed_response(:not_found, "user not found")
-        else
-            render_success_response(:ok, "success to get user", @user, nil)
-        end
+        # if @user.nil?
+        #     render_failed_response(:not_found, "user not found")
+        # else
+        #     render_success_response(:ok, "success to get user", @user, nil)
+        # end
+
+        uid = params[:id]
+        user_profile = FirebaseAuth::UserProfile.get_user_profile(uid)
+
+        user = {
+            displayName: user_profile.display_name,
+            email: user_profile.email,
+            photoURL: user_profile.photo_url,
+        }
+        
+        render_success_response(:ok, "success to get user", user)
+
     end
 
     # PUT /users/:id
-    def update 
-        if @user.update(user_params)
-            render_success_response(:ok, "success to update user", @user, nil)
+    def update
+        name = user_params["name"] || @user.name
+        image = user_params["image"] || @user.image
+
+        if @user.update(name: name, image: image)
+            render_success_response(:ok, "success to update user", @user)
         else
             render_failed_response(:unprocessable_entity, "failed to update user")
         end
@@ -41,8 +58,8 @@ class Api::V1::UsersController < ApplicationController
 
     # DELETE /users/:id
     def destroy
-        @user.destroy
-        render_success_response(:ok, "success to delete user", nil, nil)
+        # @user.destroy
+        # render_success_response(:ok, "success to delete user", nil)
     end
 
     private
@@ -75,11 +92,12 @@ class Api::V1::UsersController < ApplicationController
         partner
     end
 
-    def render_success_response(status, message, user, partner)
+    def render_success_response(status, message, user)
         render status: status, json: {
             message: message,
-            user: user.as_json(except: [:uid, :created_at, :updated_at]),
-            partner: partner.as_json(except: [:uid, :created_at, :updated_at])
+            data: {
+                user: user.as_json(except: [:uid, :created_at, :updated_at]),
+            }
         }
     end
 

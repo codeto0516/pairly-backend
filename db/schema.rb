@@ -22,13 +22,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_25_143612) do
   end
 
   create_table "invitations", force: :cascade do |t|
-    t.integer "inviter_id", null: false
-    t.integer "invitee_id"
+    t.string "inviter", null: false
+    t.string "invitee", null: false
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["invitee_id"], name: "index_invitations_on_invitee_id"
-    t.index ["inviter_id"], name: "index_invitations_on_inviter_id"
+  end
+
+  create_table "transaction_amounts", force: :cascade do |t|
+    t.integer "transaction_id", null: false
+    t.string "uid", null: false
+    t.integer "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["transaction_id"], name: "index_transaction_amounts_on_transaction_id"
   end
 
   create_table "transaction_types", force: :cascade do |t|
@@ -37,42 +44,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_25_143612) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "transaction_users", force: :cascade do |t|
-    t.integer "transaction_id", null: false
-    t.integer "user_id", null: false
-    t.integer "amount"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["transaction_id"], name: "index_transaction_users_on_transaction_id"
-    t.index ["user_id"], name: "index_transaction_users_on_user_id"
-  end
-
   create_table "transactions", force: :cascade do |t|
     t.date "paid_date"
     t.integer "category_id", default: 1, null: false
     t.string "content"
-    t.integer "created_by_id", null: false
+    t.string "created_by", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_transactions_on_category_id"
-    t.index ["created_by_id"], name: "index_transactions_on_created_by_id"
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "uid", null: false
-    t.string "email"
-    t.string "name"
-    t.string "image"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "categories", "transaction_types"
-  add_foreign_key "invitations", "users", column: "invitee_id"
-  add_foreign_key "invitations", "users", column: "inviter_id"
-  add_foreign_key "transaction_users", "transactions"
-  add_foreign_key "transaction_users", "users"
+  add_foreign_key "transaction_amounts", "transactions"
   add_foreign_key "transactions", "categories"
-  add_foreign_key "transactions", "users", column: "created_by_id"
 end
