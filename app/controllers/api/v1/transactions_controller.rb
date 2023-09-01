@@ -1,5 +1,5 @@
 class Api::V1::TransactionsController < ApplicationController
-    before_action :transaction_params, only: [:create]
+    # before_action :transaction_params, only: [:create]
     before_action :set_transaction, only: [:show, :update, :destroy]
     # before_action :set_transaction_list, only: [:index]
 
@@ -11,20 +11,26 @@ class Api::V1::TransactionsController < ApplicationController
         per_page = params["per-page"] || 10
         
 
-        user = User.find_by(uid: @payload["user_id"])
+        transaction_amount_list = TransactionAmount.where(uid: @payload["user_id"])
+        
+        puts transaction_amount_list.inspect   
+
 
         # 指定月で絞り込み
-        month_transactions = user.transactions.where("paid_date between ? and ?", start_date, end_date)
-        
+        month_transactions = Transaction.where(id: transaction_amount_list.pluck(:transaction_id))
+                                    .where("paid_date between ? and ?", start_date, end_date)
+
+
         # 新しい日付順に並べ替え
         sorted_transactions = month_transactions.includes(
             :category, 
             :category => :transaction_type, 
-            :transaction_users => :user
         ).order(paid_date: :desc, id: :desc)  # 新しい日付順、かつ、新しい取引順に並べ替え
 
         # ページネーション
         transactions = sorted_transactions.paginate(page: page, per_page: per_page)
+
+        puts transactions.inspect
 
         # レスポンス用のJSONを作成
         transaction_list = transactions.map do |transaction|
@@ -35,9 +41,9 @@ class Api::V1::TransactionsController < ApplicationController
                 big_category_id: transaction.category.parent_id,
                 small_category_id: transaction.category.id,
                 content: transaction.content,
-                created_by: transaction.created_by_id,
-                amounts: transaction.transaction_users.map do |transaction_user|
-                    { user_id: transaction_user.user_id, amount: transaction_user.amount}
+                created_by: transaction.created_by,
+                amounts: transaction.transaction_amounts.map do |transaction_amount|
+                    { user_id: transaction_amount.uid, amount: transaction_amount.amount}
                 end
             }.as_json(except: [:created_at, :updated_at])
         end
@@ -70,21 +76,20 @@ class Api::V1::TransactionsController < ApplicationController
 
     # POST /transactions
     def create
-
         # トランザクションの作成
         transaction = Transaction.new(
             paid_date: transaction_params[:paid_date], 
             category_id: transaction_params[:small_category_id],
             content: transaction_params[:content], 
-            created_by_id: transaction_params[:created_by]
+            created_by: transaction_params[:created_by]
         )
 
         # 中間テーブルへ保存
         transaction_params[:amounts].each do |amount_params|
-            transaction.transaction_users.build(
-                user_id: amount_params[:user_id], 
+            transaction.transaction_amounts.build(
+                related_transaction: transaction,
+                uid: amount_params[:user_id], 
                 amount: amount_params[:amount],
-                related_transaction: transaction
             )
         end
 

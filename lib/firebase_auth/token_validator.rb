@@ -12,7 +12,7 @@ class FirebaseAuth::TokenValidator
     ALG = 'RS256'.freeze
     CERTS_URI = 'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com'.freeze
     CERTS_CACHE_KEY = 'firebase_auth_certificates'.freeze
-    PROJECT_ID = ENV["IREBASE_PROJECT_ID"]
+    PROJECT_ID = ENV["FIREBASE_PROJECT_ID"]
     ISSUER_URI_BASE = 'https://securetoken.google.com/'.freeze
 
     def initialize(token)
