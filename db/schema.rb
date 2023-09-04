@@ -23,7 +23,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_25_143612) do
 
   create_table "invitations", force: :cascade do |t|
     t.string "inviter", null: false
-    t.string "invitee", null: false
+    t.string "invitee"
+    t.string "invite_digest"
+    t.datetime "expires_at"
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

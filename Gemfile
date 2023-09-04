@@ -9,15 +9,12 @@ gem "puma", "~> 5.0"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 
 gem "rack-cors"
-gem "devise"
-gem 'devise_token_auth'
-gem 'devise-i18n' 
-gem "omniauth"
 gem 'dotenv-rails' 
 gem 'jwt'
 gem 'will_paginate'
 gem 'json'
 gem 'google-apis-identitytoolkit_v3'
+gem 'mysql2'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
