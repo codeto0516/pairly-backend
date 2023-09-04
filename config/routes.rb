@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       resources :users
       resources :categories, param: :type_name
       resources :transactions
+      resources :invitations
     end
   end
 end
