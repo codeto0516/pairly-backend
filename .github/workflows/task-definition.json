@@ -1,0 +1,26 @@
+{
+    "family": "pairly-backend",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+        {
+            "name": "pairly-backend",
+            "image": "pairly-backend",
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true
+        }
+    ],
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "requiresCompatibilities": ["FARGATE"],
+    "executionRoleArn": "ecsTaskExecutionRole",
+    "cpu": "256",
+    "memory": "512"
+}
