@@ -2,8 +2,8 @@ require 'json'
 require 'net/http'
 
 class FirebaseAuth::UserProfile
-  FIREBASE_API_KEY = "AIzaSyCS9-8tAwk6PYb4qOy-PowR1PFmDTUoqgI"
-  FIREBASE_AUTH_DOMAIN = "pairly-8c80b.firebaseapp.com"
+  FIREBASE_API_KEY = ENV.fetch('FIREBASE_API_KEY', nil)
+  FIREBASE_AUTH_DOMAIN = ENV.fetch('FIREBASE_AUTH_DOMAIN', nil)
 
   def self.get_user_profile(uid)
     service = Google::Apis::IdentitytoolkitV3::IdentityToolkitService.new
