@@ -1,30 +1,21 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
-#
 default: &default
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    timeout: 5000
+    adapter: mysql2
+    encoding: utf8mb4
+    collation: utf8mb4_unicode_ci
+    host: <%= ENV["DB_HOST"]%>
+    username: <%=  ENV["DB_USERNAME"]%>
+    password: <%=  ENV["DB_PASSWORD"]%>
 
 development:
-  <<: *default
-  adapter: sqlite3
-  database: db/development.sqlite3
+    <<: *default
+    database: pairlydb
 
 test:
-  <<: *default
-  adapter: sqlite3
-  database: db/test.sqlite3
+    <<: *default
+    database: pairlydb
 
 production:
-  <<: *default
-  adapter: mysql2
-  encoding: utf8mb4
-  collation: utf8mb4_unicode_ci
-  host: pairly-backend-rds.clvjez6pqxs5.ap-northeast-1.rds.amazonaws.com
-  # host: db
-  username: admin
-  password: password
-  database: pairlydb
+    <<: *default
+    database: <%= ENV['DB_DATABASE'] %>
