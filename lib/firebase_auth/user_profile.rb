@@ -14,20 +14,16 @@ class FirebaseAuth::UserProfile
       scope: [
         # 認可が必要なスコープを列挙する。今回はidentitytoolkitのみ
         # ここにFirebaseの各種サービスを指定することでUserManagement以外も利用可能
-        'https://www.googleapis.com/auth/identitytoolkit',
+        'https://www.googleapis.com/auth/identitytoolkit'
       ].join(' ')
     )
 
     request = Google::Apis::IdentitytoolkitV3::GetAccountInfoRequest.new(local_id: [uid])
     response = service.get_account_info(request)
 
-    if response.kind_of?(Google::Apis::IdentitytoolkitV3::GetAccountInfoResponse)
+    if response.is_a?(Google::Apis::IdentitytoolkitV3::GetAccountInfoResponse)
       user_profiles = response.users
       user_profiles.first
-    else
-      nil
     end
   end
 end
-
-
