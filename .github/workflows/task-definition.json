@@ -14,10 +14,52 @@
                     "appProtocol": "http"
                 }
             ],
+            "environment": [
+                {
+                    "name": "RAILS_LOG_TO_STDOUT",
+                    "value": "true"
+                },
+                {
+                    "name": "RAILS_ENV",
+                    "value": "production"
+                },
+                {
+                    "name": "RAILS_SERVE_STATIC_FILES",
+                    "value": "true"
+                },
+                {
+                    "name": "FIREBASE_PROJECT_ID",
+                    "value": "pairly-8c80b"
+                },
+                {
+                    "name": "FIREBASE_AUTH_DOMAIN",
+                    "value": "pairly-8c80b.firebaseapp.com"
+                }
+            ],
             "secrets": [
                 {
                     "name": "SECRET_KEY_BASE",
-                    "valueFrom": "/pairly-backend/rails-secret-key-base"
+                    "valueFrom": "/pairly-backend/rails/secret-key-base"
+                },
+                {
+                    "name": "RAILS_MASTER_KEY",
+                    "valueFrom": "/pairly-backend/rails/master-key"
+                },
+                {
+                    "name": "DB_HOST",
+                    "valueFrom": "/pairly-backend/db/host"
+                },
+                {
+                    "name": "DB_USERNAME",
+                    "valueFrom": "/pairly-backend/db/username"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": "/pairly-backend/db/password"
+                },
+                {
+                    "name": "FIREBASE_API_KEY",
+                    "valueFrom": "/pairly-backend/firebase/api-key"
                 }
             ],
             "essential": true,
