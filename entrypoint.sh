@@ -11,8 +11,8 @@ rm -f /myapp/tmp/pids/server.pid
 nginx
 
 # Railsを起動
-# rails s # 開発環境
-rails s -e production # 本番環境
+rails server # 開発環境
+# rails s -e production # 本番環境
 
 # bundle exec rails db:create
 # bundle exec rails db:migrate
