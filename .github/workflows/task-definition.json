@@ -78,6 +78,7 @@
         "operatingSystemFamily": "LINUX"
     },
     "requiresCompatibilities": ["FARGATE"],
+    "taskRoleArn": "ecsTaskExecutionRole",
     "executionRoleArn": "ecsTaskExecutionRole",
     "cpu": "256",
     "memory": "512"
