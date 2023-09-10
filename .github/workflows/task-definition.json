@@ -34,6 +34,10 @@
                 {
                     "name": "FIREBASE_AUTH_DOMAIN",
                     "value": "pairly-8c80b.firebaseapp.com"
+                },
+                {
+                    "name": "DB_DATABASE",
+                    "value": "pairlydb"
                 }
             ],
             "secrets": [
