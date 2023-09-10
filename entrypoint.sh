@@ -14,7 +14,8 @@ nginx
 # rails s # 開発環境
 rails s -e production # 本番環境
 
-rails db:migrate
-rails db:seed
+# bundle exec rails db:create
+# bundle exec rails db:migrate
+# bundle exec rails db:seed
 
 # exec "$@"
