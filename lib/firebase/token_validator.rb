@@ -4,7 +4,7 @@
 #    validator = FirebaseAuth::TokenValidator.new(token)
 #    payload = validator.validate!
 #
-class FirebaseAuth::TokenValidator
+class Firebase::TokenValidator
   require 'jwt'
   require 'net/http'
   class InvalidTokenError < StandardError; end
