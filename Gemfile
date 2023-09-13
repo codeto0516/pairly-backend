@@ -13,10 +13,12 @@ gem 'jwt'
 gem 'will_paginate'
 gem 'json'
 gem 'google-apis-identitytoolkit_v3'
+gem 'google-cloud-storage'
 
 group :development, :test do
   gem "sqlite3", "~> 1.4"
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem 'rspec-rails'
 end
 
 group :development do
