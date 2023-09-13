@@ -35,29 +35,19 @@ class Firebase::TokenValidator
       verify_iat: true
     }
 
-    payload, = JWT.decode(@token, nil, true, options) do |header|
+    payload, _ = JWT.decode(@token, nil, true, options) do |header|
       cert = fetch_certificates[header['kid']]
       OpenSSL::X509::Certificate.new(cert).public_key if cert.present?
     end
 
-    raise InvalidTokenError, 'Token signature has expired' unless payload
+    # raise InvalidTokenError, 'Token signature has expired' if payload.nil?
 
     # JWT.decode でチェックされない項目のチェック
     raise InvalidTokenError, 'Invalid auth_time' unless Time.zone.at(payload['auth_time']).past?
     raise InvalidTokenError, 'Invalid sub' if payload['sub'].empty?
 
     payload
-  rescue JWT::ExpiredSignature
-    # raise InvalidTokenError.new('Token signature has expired')
-    nil
-  rescue JWT::DecodeError => e
-    Rails.logger.debug "==================================================================="
-    Rails.logger.error e.message
-    Rails.logger.error e.backtrace.join("\n")
-    # raise InvalidTokenError.new(e.message)
-    Rails.logger.debug "==================================================================="
 
-    nil
   end
 
   private

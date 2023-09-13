@@ -10,7 +10,7 @@ class Api::V1::TransactionsController < ApplicationController
     page = params["page"] || 1
     per_page = params["per-page"] || 10
 
-    transaction_amount_list = TransactionAmount.where(uid: @payload["user_id"])
+    transaction_amount_list = TransactionAmount.where(uid: @me[:local_id])
 
     Rails.logger.debug transaction_amount_list.inspect
 
