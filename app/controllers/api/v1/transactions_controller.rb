@@ -104,7 +104,7 @@ class Api::V1::TransactionsController < ApplicationController
       paid_date: transaction_params[:paid_date],
       category_id: transaction_params[:small_category_id],
       content: transaction_params[:content],
-      created_by_id: transaction_params[:created_by]
+      created_by: transaction_params[:created_by]
     )
 
     @transaction.transaction_users.destroy_all

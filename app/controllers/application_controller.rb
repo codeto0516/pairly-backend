@@ -26,11 +26,11 @@ class ApplicationController < ActionController::API
       Rails.logger.error "トークンの有効期限が切れています。"
       return faild_response(:unauthorized, "認証に失敗しました。トークンの有効期限が切れています。")
     rescue StandardError => e
-      return faild_response(:unauthorized, "認証に失敗しました。エラーメッセージ => #{e.message}")
-      Rails.logger.debug "=" * 60 # rubocop:disable Lint/UnreachableCode
+      Rails.logger.debug "=" * 60
       Rails.logger.error e.message
       Rails.logger.error e.backtrace.join("\n")
       Rails.logger.debug "=" * 60
+      return faild_response(:unauthorized, "認証に失敗しました。エラーメッセージ => #{e.message}")
     end
 
     # もしpayloadがnilなら、トークンが不正なので、エラーを返す。
