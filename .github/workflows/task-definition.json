@@ -41,7 +41,7 @@
                 },
                 {
                     "name": "FIREBASE_STORAGE_BUCKET",
-                    "valueFrom": "pairly-8c80b.appspot.com"
+                    "value": "pairly-8c80b.appspot.com"
                 }
             ],
             "secrets": [
