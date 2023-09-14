@@ -16,7 +16,10 @@ class Firebase::Storage
         service_account_key = JSON.parse(decoded_service_account_key)
 
         # バケットを初期化する
-        storage = Google::Cloud::Storage.new(credentials: service_account_key)
+        storage = Google::Cloud::Storage.new(
+            project_id: ENV.fetch('FIREBASE_PROJECT_ID', nil),
+            credentials: service_account_key
+        )
 
         # バケットを取得する
         storage.bucket ENV.fetch('FIREBASE_STORAGE_BUCKET', nil)
