@@ -2,18 +2,26 @@ require 'json'
 require 'net/http'
 
 class Firebase::Authentication
-  FIREBASE_API_KEY = ENV.fetch('FIREBASE_API_KEY', nil)
-  FIREBASE_AUTH_DOMAIN = ENV.fetch('FIREBASE_AUTH_DOMAIN', nil)
+    FIREBASE_API_KEY = ENV.fetch('FIREBASE_API_KEY', nil)
+    FIREBASE_AUTH_DOMAIN = ENV.fetch('FIREBASE_AUTH_DOMAIN', nil)
 
   def self.initialize_service
     service = Google::Apis::IdentitytoolkitV3::IdentityToolkitService.new
     service.key = FIREBASE_API_KEY
 
+    # serviceAccountKey.jsonをデコードして環境変数にセットする　base64 -w 0 serviceAccountKey.json > Base64ServiceAccountKey.txt
+
+    # 環境変数を取得する
+    encoded_service_account_key = ENV.fetch('FIREBASE_SERVICE_ACCOUNT_KEY', nil)
+
+    # デコードする
+    decoded_service_account_key = Base64.decode64(encoded_service_account_key)
+
     service.authorization = Google::Auth::ServiceAccountCredentials.make_creds(
-      json_key_io: File.open("./serviceAccountKey.json"),
-      scope: [
-        'https://www.googleapis.com/auth/identitytoolkit'
-      ].join(' ')
+        json_key_io: StringIO.new(decoded_service_account_key),
+        scope: [
+            'https://www.googleapis.com/auth/identitytoolkit'
+        ].join(' ')
     )
     service
   end

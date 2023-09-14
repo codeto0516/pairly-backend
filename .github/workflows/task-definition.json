@@ -64,6 +64,10 @@
                 {
                     "name": "FIREBASE_API_KEY",
                     "valueFrom": "/pairly-backend/firebase/api-key"
+                },
+                {
+                    "name": "FIREBASE_SERVICE_ACCOUNT_KEY",
+                    "valueFrom": "/pairly-backend/firebase/service-account-key"
                 }
             ],
             "essential": true,
