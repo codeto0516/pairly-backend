@@ -38,6 +38,10 @@
                 {
                     "name": "DB_DATABASE",
                     "value": "pairlydb"
+                },
+                {
+                    "name": "FIREBASE_STORAGE_BUCKET",
+                    "valueFrom": "pairly-8c80b.appspot.com"
                 }
             ],
             "secrets": [
@@ -69,6 +73,7 @@
                     "name": "FIREBASE_SERVICE_ACCOUNT_KEY",
                     "valueFrom": "/pairly-backend/firebase/service-account-key"
                 }
+
             ],
             "essential": true,
             "logConfiguration": {
