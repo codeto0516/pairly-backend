@@ -1,4 +1,21 @@
 class Api::V1::CategoriesController < ApplicationController
+
+  def index
+    # 全ての取引タイプを取得
+    category_all = TransactionType.all.map do |transaction_type|
+      {
+        type_name: transaction_type.name,
+        categories: generate_category_list(transaction_type)
+      }
+    end
+    render status: :ok, json: {
+      message: "カテゴリーリストの取得に成功しました。",
+      data: {
+        types: category_all.as_json(except: [:created_at, :updated_at])
+      }
+    }
+  end
+
   # GET /categories/:type_name
   def show
     transaction_type = TransactionType.find_by(name: params[:type_name])
@@ -44,7 +61,9 @@ class Api::V1::CategoriesController < ApplicationController
   def render_success_response(status, message, category_list)
     render status:, json: {
       message:,
-      data: category_list.as_json(except: [:created_at, :updated_at])
+      data: {
+        categories: category_list.as_json(except: [:created_at, :updated_at])
+      }
     }
   end
 
