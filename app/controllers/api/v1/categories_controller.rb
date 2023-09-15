@@ -1,4 +1,4 @@
-class Api::V1::CategoriesController < ApplicationController
+class Api::V1::CategoriesController < Api::V1::BaseController
 
   def index
     # 全ての取引タイプを取得
@@ -8,12 +8,8 @@ class Api::V1::CategoriesController < ApplicationController
         categories: generate_category_list(transaction_type)
       }
     end
-    render status: :ok, json: {
-      message: "カテゴリーリストの取得に成功しました。",
-      data: {
-        types: category_all.as_json(except: [:created_at, :updated_at])
-      }
-    }
+
+    render_response(:ok, "カテゴリーリストの取得に成功しました。", { types: category_all.as_json(except: [:created_at, :updated_at]) })
   end
 
   # GET /categories/:type_name
@@ -67,9 +63,5 @@ class Api::V1::CategoriesController < ApplicationController
     }
   end
 
-  def render_failed_response(status, message)
-    render status:, json: {
-      message:
-    }
-  end
+
 end

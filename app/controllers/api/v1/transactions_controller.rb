@@ -1,4 +1,4 @@
-class Api::V1::TransactionsController < ApplicationController
+class Api::V1::TransactionsController < Api::V1::BaseController
   before_action :set_transaction, only: [:update, :destroy]
   before_action :set_params, only: [:create, :update]
 
@@ -31,7 +31,7 @@ class Api::V1::TransactionsController < ApplicationController
 
     # レスポンス用のJSONを作成
     transactions = sorted_transactions.map do |transaction|
-      response_format(transaction)
+      json_format(transaction)
     end
 
     # 総件数を取得
@@ -44,7 +44,6 @@ class Api::V1::TransactionsController < ApplicationController
   #############################################################################################################
   # POST /transactions
   #############################################################################################################
-  # POST /transactions
   def create
     ActiveRecord::Base.transaction do
       # トランザクションの作成
@@ -54,7 +53,7 @@ class Api::V1::TransactionsController < ApplicationController
       save_transaction_amounts(transaction, @params[:amounts])
 
       if transaction.save
-        render_response(:ok, '取引の作成に成功しました。', { transaction: response_format(transaction) })
+        render_response(:ok, '取引の作成に成功しました。', { transaction: json_format(transaction) })
       else
         render_response(:internal_server_error, '取引の作成に失敗しました。', nil)
       end
@@ -78,7 +77,7 @@ class Api::V1::TransactionsController < ApplicationController
         save_transaction_amounts(@transaction, @params[:amounts])
 
         if @transaction.save
-          render_response(:ok, '取引の更新に成功しました。', { transaction: response_format(@transaction) })
+          render_response(:ok, '取引の更新に成功しました。', { transaction: json_format(@transaction) })
         else
           render_response(:internal_server_error, '取引の更新に失敗しました。', nil)
         end
@@ -151,7 +150,7 @@ class Api::V1::TransactionsController < ApplicationController
   end
 
   # レスポンス用のJSONを作成
-  def response_format(transaction)
+  def json_format(transaction)
     {
       id: transaction.id,
       paid_date: transaction.paid_date,
@@ -166,9 +165,5 @@ class Api::V1::TransactionsController < ApplicationController
     }.as_json(except: [:created_at, :updated_at])
   end
 
-  # レスポンス
-  def render_response(status, message, data)
-    render status:, json: { message:, data: }
-  end
 
 end
