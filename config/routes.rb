@@ -12,7 +12,12 @@ Rails.application.routes.draw do
         end
       end
       resources :categories, param: :type_name
-      resources :transactions
+
+      resources :transactions do
+        # GETリクエストで年と月を指定して取引データを取得
+        get ':year/:month', on: :collection, action: 'get_transactions_for_specific_month'
+      end
+
       resources :invitations
     end
   end
