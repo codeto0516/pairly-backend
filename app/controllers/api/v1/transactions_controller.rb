@@ -1,16 +1,15 @@
 class Api::V1::TransactionsController < ApplicationController
-  # before_action :transaction_params, only: [:create]
-  before_action :set_transaction, only: [:show, :update, :destroy]
-  # before_action :set_transaction_list, only: [:index]
+  before_action :set_transaction, only: [:update, :destroy]
+  before_action :set_params, only: [:create, :update]
 
-  def get_transactions_for_specific_month
+  #############################################################################################################
+  # GET /transactions
+  #############################################################################################################
+  def index
     # パラメータを取得
-    year = params[:year].to_i
-    month = params[:month].to_i
-
-
-    # Time.zone.today.beginning_of_month
-    # Time.zone.today.end_of_month
+    year = params[:year].to_i | Time.zone.today.year
+    month = params[:month].to_i | Time.zone.today.month
+    # sort = params[:sort] | 'desc'
 
     # yearとmonthで指定された月の初日と最終日を取得
     start_date = Date.new(year, month, 1)
@@ -31,148 +30,145 @@ class Api::V1::TransactionsController < ApplicationController
     ).order(paid_date: :desc, id: :desc) # 新しい日付順、かつ、新しい取引順に並べ替え
 
     # レスポンス用のJSONを作成
-    transaction_list = sorted_transactions.map do |transaction|
-      {
-        id: transaction.id,
-        paid_date: transaction.paid_date,
-        type: transaction.category.transaction_type.name,
-        big_category_id: transaction.category.parent_id,
-        small_category_id: transaction.category.id,
-        content: transaction.content,
-        created_by: transaction.created_by,
-        amounts: transaction.transaction_amounts.map do |transaction_amount|
-                   { user_id: transaction_amount.uid, amount: transaction_amount.amount }
-                 end
-      }.as_json(except: [:created_at, :updated_at])
+    transactions = sorted_transactions.map do |transaction|
+      response_format(transaction)
     end
 
     # 総件数を取得
-    total_count = month_transactions.count
+    total_count = transactions.count
 
-    if transaction_list.empty?
-      render json: {
-        status: 'SUCCESS',
-        message: 'Empty transaction list',
-        data: {
-          transactions: transaction_list,
-          total_count:
-        }
-      }
-
-    else
-      render json: {
-        status: 'SUCCESS',
-        message: 'Loaded transaction list',
-        data: {
-          transactions: transaction_list,
-          total_count:
-        }
-      }
-    end
+    # レスポンス
+    render_response(:ok, '指定月の取引一覧の取得に成功しました。', { transactions:, total_count: })
   end
 
+  #############################################################################################################
+  # POST /transactions
+  #############################################################################################################
   # POST /transactions
   def create
-    # トランザクションの作成
-    transaction = Transaction.new(
-      paid_date: transaction_params[:paid_date],
-      category_id: transaction_params[:small_category_id],
-      content: transaction_params[:content],
-      created_by: transaction_params[:created_by]
-    )
+    ActiveRecord::Base.transaction do
+      # トランザクションの作成
+      transaction = Transaction.new(@params.except(:amounts))
 
-    # 中間テーブルへ保存
-    transaction_params[:amounts].each do |amount_params|
-      transaction.transaction_amounts.build(
-        related_transaction: transaction,
-        uid: amount_params[:user_id],
-        amount: amount_params[:amount]
-      )
-    end
+      # 中間テーブルへ保存
+      save_transaction_amounts(transaction, @params[:amounts])
 
-    if transaction.save
-      response = {
-        id: transaction.id,
-        paid_date: transaction.paid_date,
-        type: transaction.category.transaction_type.name,
-        big_category_id: transaction.category.parent_id,
-        small_category_id: transaction.category.id,
-        content: transaction.content,
-        created_by: transaction.created_by,
-        amounts: transaction.transaction_amounts.map do |transaction_amount|
-                   { user_id: transaction_amount.uid, amount: transaction_amount.amount }
-                 end
-      }.as_json(except: [:created_at, :updated_at])
-      render json: { status: 'SUCCESS', message: 'Transaction created', data: response }
-    else
-      Rails.logger.debug transaction.errors.inspect
-      render json: { status: 'ERROR', message: 'Failed to create transaction', data: transaction.errors }
+      if transaction.save
+        render_response(:ok, '取引の作成に成功しました。', { transaction: response_format(transaction) })
+      else
+        render_response(:internal_server_error, '取引の作成に失敗しました。', nil)
+      end
+
+    rescue ActiveRecord::RecordInvalid => e
+      render_response(:internal_server_error, "取引の作成に失敗しました。詳細 => #{e.message}", nil)
     end
   end
 
+  #############################################################################################################
   # PUT /transactions/:id
+  #############################################################################################################
   def update
-    # トランザクションの作成
-    @transaction.update(
-      paid_date: transaction_params[:paid_date],
-      category_id: transaction_params[:small_category_id],
-      content: transaction_params[:content],
-      created_by: transaction_params[:created_by]
-    )
+    ActiveRecord::Base.transaction do
+      if @transaction.update(@params.except(:amounts))
 
-    @transaction.transaction_amounts.destroy_all
+        # 指定されたトランザクションに紐づく中間テーブルを全て削除
+        @transaction.transaction_amounts.clear
 
-    # 中間テーブルへ保存
-    transaction_params[:amounts].each do |amount_params|
-      @transaction.transaction_amounts.build(
-        uid: amount_params[:user_id],
-        amount: amount_params[:amount],
-        related_transaction: @transaction
-      )
-    end
+        # 中間テーブルを再度作成し、保存する
+        save_transaction_amounts(@transaction, @params[:amounts])
 
-    if @transaction.save
-      response = {
-        id: @transaction.id,
-        paid_date: @transaction.paid_date,
-        type: @transaction.category.transaction_type.name,
-        big_category_id: @transaction.category.parent_id,
-        small_category_id: @transaction.category.id,
-        content: @transaction.content,
-        created_by: @transaction.created_by,
-        amounts: @transaction.transaction_amounts.map do |transaction_amount|
-                   { user_id: transaction_amount.uid, amount: transaction_amount.amount }
-                 end
-      }.as_json(except: [:created_at, :updated_at])
+        if @transaction.save
+          render_response(:ok, '取引の更新に成功しました。', { transaction: response_format(@transaction) })
+        else
+          render_response(:internal_server_error, '取引の更新に失敗しました。', nil)
+        end
 
+      else
+        render_response(:internal_server_error, '取引の更新に失敗しました。', nil)
+      end
 
-      render json: { status: :ok, message: 'Transaction updated', data: response }
-    else
-      render json: { status: 'ERROR', message: 'Failed to update transaction', data: @transaction.errors }
+    rescue ActiveRecord::RecordInvalid => e
+      render_response(:internal_server_error, "取引の更新に失敗しました。詳細 => #{e.message}", nil)
+
     end
   end
 
+  #############################################################################################################
   # DELETE /transactions/:id
+  #############################################################################################################
   def destroy
     if @transaction.destroy
-      render json: { status: 'SUCCESS', message: 'Deleted the transaction', data: @transaction }
+      render_response(:ok, '取引の削除に成功しました。', nil)
     else
-      render json: { status: 'ERROR', message: 'Not deleted', data: @transaction.errors }
+      render_response(:internal_server_error, '取引の削除に失敗しました。', nil)
     end
   end
 
+  #############################################################################################################
+  # PRIVATE METHOD
+  #############################################################################################################
   private
 
+  # ストロングパラメータ
   def transaction_params
-    params.permit(:id, :paid_date, :content, :type, :created_by, :big_category_id, :small_category_id, amounts: [:user_id, :amount])
+    params.permit(:id, :paid_date, :content, :type, :created_by, :small_category_id, amounts: [:user_id, :amount])
   end
 
+  # idで指定された取引を取得しセット
   def set_transaction
     @transaction = Transaction.find(params[:id])
+    # 取引が見つからない場合
+    if @transaction.nil?
+      return render_response(:not_found, '指定された取引が見つかりません。', nil)
+    end
+
+    # 指定された取引の中間テーブルに自分のIDが含まれていない場合
+    unless @transaction.transaction_amounts.pluck(:uid).include?(@me[:local_id])
+      return render_response(:forbidden, '権限がありません。', nil)
+    end
   end
 
-  # ユーザーに紐づいた取引を取得
-  def set_transaction_list
-    @transactions = Transaction.all
+  # パラメータをセット
+  def set_params
+    @params = {
+      paid_date: transaction_params[:paid_date],
+      category_id: transaction_params[:small_category_id],
+      content: transaction_params[:content],
+      created_by: transaction_params[:created_by],
+      amounts: transaction_params[:amounts]
+    }
   end
+
+  # 中間テーブルに保存
+  def save_transaction_amounts(transaction, amounts)
+    amounts.each do |amount|
+      transaction.transaction_amounts.build(
+        uid: amount[:user_id],
+        amount: amount[:amount],
+        related_transaction: transaction
+      )
+    end
+  end
+
+  # レスポンス用のJSONを作成
+  def response_format(transaction)
+    {
+      id: transaction.id,
+      paid_date: transaction.paid_date,
+      type: transaction.category.transaction_type.name,
+      big_category_id: transaction.category.parent_id,
+      small_category_id: transaction.category.id,
+      content: transaction.content,
+      created_by: transaction.created_by,
+      amounts: transaction.transaction_amounts.map do |transaction_amount|
+        { user_id: transaction_amount.uid, amount: transaction_amount.amount }
+      end
+    }.as_json(except: [:created_at, :updated_at])
+  end
+
+  # レスポンス
+  def render_response(status, message, data)
+    render status:, json: { message:, data: }
+  end
+
 end
