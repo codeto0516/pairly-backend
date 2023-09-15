@@ -1,4 +1,4 @@
-class Api::V1::InvitationsController < ApplicationController
+class Api::V1::InvitationsController < Api::V1::BaseController
   # GET /invitations
   # 招待コードを発行
   def index; end

@@ -1,89 +1,96 @@
-class Api::V1::UsersController < ApplicationController
+class Api::V1::UsersController < Api::V1::BaseController
   require 'firebase/authentication'
-  before_action :set_partner
+  before_action :set_partner, only: [:me, :update]
 
+  #############################################################################################################
   # GET /users/me
+  #############################################################################################################
   def me
-    me = Firebase::Authentication.show(@me[:local_id])
-    @me[:display_name] = me.display_name
-    @me[:email] = me.email
-    @me[:photo_url] = me.photo_url
-    @me[:email_verified] = me.email_verified
-    render_success_response(:ok, "success to get user", @me)
+    me = fetch_user(@me[:local_id])
+    render_response(:ok, "認証済みユーザーの情報取得に成功しました。", { user: json_format_me(me) })
   end
 
+  #############################################################################################################
   # GET /users/:id
+  #############################################################################################################
   def show
-    user = Firebase::Authentication.show(params[:id])
-    @user[:display_name] = user.display_name
-    @user[:email] = user.email
-    @user[:photo_url] = user.photo_url
-    @user[:email_verified] = user.email_verified
-    render_success_response(:ok, "success to get user", @user)
+    user = fetch_user(params[:id])
+    render_response(:ok, "指定されたユーザー情報の取得に成功しました。", { user: json_format_other(user) })
   end
 
+  #############################################################################################################
   # PUT /users/:id
+  #############################################################################################################
   def update
+    # パラメータを取得
     display_name = params[:displayName] || nil
     image = params[:image] || nil
+
+    # もし画像データがあれば、画像をアップロードしてURLを取得
     photo_url = Firebase::Storage.upload(params[:id], image) if image
+
+    # プロフィールを更新
     user_profile = Firebase::Authentication.update(params[:id], display_name, photo_url)
-    @me[:display_name] = user_profile.display_name
-    @me[:photo_url] = user_profile.photo_url
-    render_success_response(:ok, "success to update user", @me)
+    render_response(:ok, "ユーザー情報の更新に成功しました。", { user: json_format_me(user_profile) })
   end
 
+  #############################################################################################################
+  # PRIVATE METHOD
+  #############################################################################################################
   private
+
+  # ストロングパラメーター
+  def user_params
+    params.require(:user).permit(:local_id, :display_name, :email, :photo_url)
+  end
+
+  # Firebaseからユーザー情報を取得する
+  def fetch_user(user_id)
+    Firebase::Authentication.show(user_id)
+  end
 
   # パートナーを取得する
   def set_partner
-    latest_invitation = Invitation.where("inviter = :local_id OR invitee = :local_id", local_id: @me[:local_id]).order(created_at: :desc).limit(1).first
+    # 最新の招待情報を取得
+    latest_invitation = Invitation.where("inviter = :local_id OR invitee = :local_id", local_id: @me[:local_id])
+      .order(created_at: :desc).limit(1).first
+
     @me[:partner] = nil
+
     if latest_invitation.present?
-      partner_local_id = latest_invitation.inviter == @me[:local_id] ? latest_invitation.invitee : latest_invitation.inviter
-      partner_data = Firebase::Authentication.show(partner_local_id)
+      # パートナーのIDを取得
+      partner_id = latest_invitation.inviter == @me[:local_id] ? latest_invitation.invitee : latest_invitation.inviter
+
+      # パートナーの情報を取得
+      partner_data = fetch_user(partner_id)
+      
+      # パートナーの情報をセット
       if partner_data.present?
-        @me[:partner] = {
-          local_id: partner_data.local_id,
-          display_name: partner_data.display_name,
-          email: partner_data.email,
-          photo_url: partner_data.photo_url
-        }
+        @me[:partner] = json_format_other(partner_data) 
       end
     end
   end
 
-  # キーをスネークケースからキャメルケースに変換するヘルパーメソッド
-  def keys_to_camel_case(value)
-    if value.is_a?(Hash)
-      transformed_hash = {}
-      value.each do |key, sub_value|
-        camel_key = key.to_s.camelize(:lower).to_sym
-        transformed_hash[camel_key] = keys_to_camel_case(sub_value)
-      end
-      transformed_hash
-    elsif value.is_a?(Array)
-      value.map { |item| keys_to_camel_case(item) }
-    else
-      value
-    end
-  end
-
-  # 成功レスポンス
-  def render_success_response(status, message, user)
-    camel_user = keys_to_camel_case(user)
-    render status:status , json: {
-      message:,
-      data: {
-        user: camel_user
-      }
+  # 自分の情報のjsonを作成
+  def json_format_me(user)
+    {
+      local_id: user.local_id,
+      display_name: user.display_name,
+      email: user.email,
+      photo_url: user.photo_url,
+      email_verified: user.email_verified,
+      partner: @me[:partner],
+      token: @token
     }
   end
 
-  # 失敗レスポンス
-  def render_failed_response(status, message)
-    render status:, json: {
-      message:
+  # 自分以外の情報のjsonを作成
+  def json_format_other(user)
+    {
+      local_id: user.local_id,
+      display_name: user.display_name,
+      email: user.email,
+      photo_url: user.photo_url
     }
   end
 end
