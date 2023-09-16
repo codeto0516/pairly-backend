@@ -7,8 +7,9 @@ class Api::V1::TransactionsController < Api::V1::BaseController
   #############################################################################################################
   def index
     # パラメータを取得
-    year = params[:year].to_i | Time.zone.today.year
-    month = params[:month].to_i | Time.zone.today.month
+    year = params[:year].to_i
+    month = params[:month].to_i
+    # keyword = params[:keyword]
     # sort = params[:sort] | 'desc'
 
     # yearとmonthで指定された月の初日と最終日を取得
