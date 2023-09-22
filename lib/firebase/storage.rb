@@ -37,6 +37,6 @@ class Firebase::Storage
         file = @bucket.create_file image.path, "images/#{local_id}.#{extension}", content_type: image.content_type
 
         # ファイルのURLを取得する（有効期限は24時間）
-        file.signed_url expires: 24.hours
+        file.signed_url
     end
 end
