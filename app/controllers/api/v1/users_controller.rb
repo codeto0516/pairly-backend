@@ -1,5 +1,6 @@
 class Api::V1::UsersController < Api::V1::BaseController
   require 'firebase/authentication'
+  before_action :authenticate, only: [:me, :show, :update]
   before_action :set_partner, only: [:me, :update]
 
   #############################################################################################################

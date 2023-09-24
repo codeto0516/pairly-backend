@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
 
   # 認証だけをするためのルーティング
-  post 'api/v1/auth', to: 'application#auth'
-
+  post 'api/v1/auth', to: 'api/v1/base#auth'
 
   namespace :api do
     namespace :v1 do
