@@ -39,6 +39,10 @@ class Firebase::Authentication
 
     if response.is_a?(Google::Apis::IdentitytoolkitV3::GetAccountInfoResponse)
       user_profiles = response.users
+
+      # もしユーザーが存在しなければnilを返す
+      return nil if user_profiles.nil?
+
       user_profile = user_profiles.first
 
       # キャッシュにデータを保存
