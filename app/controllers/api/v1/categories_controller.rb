@@ -25,9 +25,9 @@ class Api::V1::CategoriesController < Api::V1::BaseController
     category_list = generate_category_list(transaction_type)
 
     if category_list.empty?
-      render_failed_response(:not_found, "指定された取引タイプに属するカテゴリーが存在しません。")
+      render_response(:not_found, "指定された取引タイプに属するカテゴリーが存在しません。", {})
     else
-      render_success_response(:ok, "カテゴリーリストの取得に成功しました。", category_list)
+      render_response(:ok, "カテゴリーリストの取得に成功しました。", { categories: category_list })
     end
   end
 
@@ -53,15 +53,4 @@ class Api::V1::CategoriesController < Api::V1::BaseController
       }
     end
   end
-
-  def render_success_response(status, message, category_list)
-    render status:, json: {
-      message:,
-      data: {
-        categories: category_list.as_json(except: [:created_at, :updated_at])
-      }
-    }
-  end
-
-
 end
