@@ -20,10 +20,10 @@ class Firebase::Authentication
     decoded_service_account_key = Base64.decode64(encoded_service_account_key)
 
     service.authorization = Google::Auth::ServiceAccountCredentials.make_creds(
-        json_key_io: StringIO.new(decoded_service_account_key),
-        scope: [
-            'https://www.googleapis.com/auth/identitytoolkit'
-        ].join(' ')
+      json_key_io: StringIO.new(decoded_service_account_key),
+      scope: [
+        'https://www.googleapis.com/auth/identitytoolkit'
+      ].join(' ')
     )
     service
   end
