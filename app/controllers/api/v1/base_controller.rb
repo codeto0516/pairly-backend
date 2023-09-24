@@ -37,6 +37,9 @@ class Api::V1::BaseController < ApplicationController
   rescue JWT::ExpiredSignature
     Rails.logger.error "トークンの有効期限が切れています。"
     return render_response(:unauthorized, "トークンの有効期限が切れています。", {})
+  rescue JWT::DecodeError
+    Rails.logger.error "トークンの検証に失敗しました。"
+    return render_response(:unauthorized, "トークンの検証に失敗しました。", {})
   rescue StandardError => e
     Rails.logger.error e.message
     Rails.logger.error e.backtrace.join("\n") # エラーの詳細をログに出力したい場合はコメントアウトを外す

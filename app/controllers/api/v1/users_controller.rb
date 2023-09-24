@@ -81,7 +81,7 @@ class Api::V1::UsersController < Api::V1::BaseController
       photo_url: user.photo_url,
       email_verified: user.email_verified,
       partner: @me[:partner],
-      token: @token
+      token: @me[:token]
     }
   end
 
