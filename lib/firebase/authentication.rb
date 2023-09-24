@@ -20,10 +20,10 @@ class Firebase::Authentication
     decoded_service_account_key = Base64.decode64(encoded_service_account_key)
 
     service.authorization = Google::Auth::ServiceAccountCredentials.make_creds(
-        json_key_io: StringIO.new(decoded_service_account_key),
-        scope: [
-            'https://www.googleapis.com/auth/identitytoolkit'
-        ].join(' ')
+      json_key_io: StringIO.new(decoded_service_account_key),
+      scope: [
+        'https://www.googleapis.com/auth/identitytoolkit'
+      ].join(' ')
     )
     service
   end
@@ -39,6 +39,10 @@ class Firebase::Authentication
 
     if response.is_a?(Google::Apis::IdentitytoolkitV3::GetAccountInfoResponse)
       user_profiles = response.users
+
+      # もしユーザーが存在しなければnilを返す
+      return nil if user_profiles.nil?
+
       user_profile = user_profiles.first
 
       # キャッシュにデータを保存

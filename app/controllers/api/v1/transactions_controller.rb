@@ -1,4 +1,5 @@
 class Api::V1::TransactionsController < Api::V1::BaseController
+  before_action :authenticate, only: [:index, :create, :update, :destroy]
   before_action :set_transaction, only: [:update, :destroy]
   before_action :set_params, only: [:create, :update]
 

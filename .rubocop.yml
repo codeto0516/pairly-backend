@@ -99,3 +99,6 @@ Style/RedundantReturn:
 
 Style/TrailingUnderscoreVariable:
   Enabled: false
+
+Style/HashSyntax:
+  Enabled: false
